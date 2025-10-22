@@ -46,19 +46,24 @@ if uploaded_files:
                             bbox = span["bbox"]  # [x0, y0, x1, y1]
                             rect = fitz.Rect(bbox)
 
-                            # Decide a cor do destaque
+                            is_bold = any(k in font_name for k in bold_fonts)
+                            is_italic = any(k in font_name for k in italic_fonts)
+
                             color = None
-                            if any(k in font_name for k in bold_fonts):
-                                color = (1, 1, 0)   # amarelo (RGB 0-1)
-                            if any(k in font_name for k in italic_fonts):
-                                # se um span for itálico (ou itálico+negrito), dá prioridade ao azul
-                                color = (0, 0.6, 1) # azul
+                            if is_bold and is_italic:
+                                color = (0, 1, 0)     # verde
+                            elif is_bold:
+                                color = (1, 1, 0)     # amarelo
+                            elif is_italic:
+                                color = (0, 0.8, 1)   # azul
 
                             if color:
-                                annot = page.add_rect_annot(rect)
+                                quad = fitz.Quad(rect)
+                                annot = page.add_highlight_annot([quad])
                                 annot.set_colors(stroke=None, fill=color)
-                                annot.set_opacity(0.35)  # transparência estilo marca-texto
+                                annot.set_opacity(0.35)
                                 annot.update()
+
 
             # 3️⃣ Salva e oferece download
             with tempfile.NamedTemporaryFile(delete=False, suffix="_destacado.pdf") as temp_out:
