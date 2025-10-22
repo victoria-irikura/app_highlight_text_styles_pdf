@@ -58,9 +58,10 @@ if uploaded_files:
                                 color = (0, 0.8, 1)   # azul
 
                             if color:
-                                quad = fitz.Quad(rect)
-                                annot = page.add_highlight_annot([quad])
-                                annot.set_colors(stroke=None, fill=color)
+                                 # ✅ use o Rect direto — evita o erro do Quad
+                                annot = page.add_highlight_annot(rect)
+                                # para highlights, a cor costuma vir de 'stroke'
+                                annot.set_colors(stroke=color)
                                 annot.set_opacity(0.35)
                                 annot.update()
 
